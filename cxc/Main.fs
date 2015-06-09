@@ -6,11 +6,11 @@ open WebSharper.Sitelets
 
 type Action =
     | [<Method "POST"; Json "numberPlate">] 
-      NumberPlate of numberPlate: string
+      NumberPlate of numberPlate : string
     | [<Method "POST"; Json "personData">]
-      PersonalData of personData: PersonData
+      PersonalData of personData : PersonData
     | [<Method "POST"; Json "coords">]
-      GPSData of coords: Coords
+      GPSData of coords : Coords
     | [<CompiledName "">] Default
 and PersonData =
     {
