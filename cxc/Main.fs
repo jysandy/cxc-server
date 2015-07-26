@@ -20,7 +20,7 @@ and PersonData =
     }
 and Coords =
     {
-        x: float
+        x: floatGPSData
         y: float
     }
 
@@ -56,7 +56,7 @@ module ApplicationLogic =
     let deniedStatus = { NumberPlateStatus = Denied; PersonDataStatus = Denied; CoordsStatus = Denied }
     let status = ref { NumberPlateStatus = Waiting; PersonDataStatus = Waiting; CoordsStatus = Waiting }
 
-    let gateStatus = ref Closed
+    let gateStatus = ref Open
 
     let postNumberPlate numberPlate =
         lock status <| fun () ->
