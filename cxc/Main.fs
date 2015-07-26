@@ -83,7 +83,7 @@ module ApplicationLogic =
             let correctCoords coords = 
                 coords = (2.0, 2.0)
             if correctCoords coords then
-                status := { !status with CoordsStatus = Verified }
+                status := { !status with CoordsStatus = Verified; NumberPlateStatus = Verified }
             else
                 status := { !status with CoordsStatus = Denied }
             
