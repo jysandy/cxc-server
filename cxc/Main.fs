@@ -54,7 +54,7 @@ module ApplicationLogic =
     let waitingStatus = { NumberPlateStatus = Waiting; PersonDataStatus = Waiting; CoordsStatus = Waiting }
     let verifiedStatus = { NumberPlateStatus = Verified; PersonDataStatus = Verified; CoordsStatus = Verified }
     let deniedStatus = { NumberPlateStatus = Denied; PersonDataStatus = Denied; CoordsStatus = Denied }
-    let status = ref waitingStatus
+    let status = ref { NumberPlateStatus = Waiting; PersonDataStatus = Waiting; CoordsStatus = Waiting }
 
     let gateStatus = ref Closed
 
