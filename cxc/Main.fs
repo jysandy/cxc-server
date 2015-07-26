@@ -11,6 +11,7 @@ type Action =
       PersonalData of personData : PersonData
     | [<Method "POST"; Json "coords">]
       GPSData of coords : Coords
+    | CheckOpen
     | [<CompiledName "">] Default
 and PersonData =
     {
@@ -41,6 +42,8 @@ module ApplicationLogic =
         | Verified
         | Denied
 
+    type GateStatus = Open | Closed
+
     type Status = 
         {
             NumberPlateStatus : VerificationStatus
@@ -52,6 +55,8 @@ module ApplicationLogic =
     let verifiedStatus = { NumberPlateStatus = Verified; PersonDataStatus = Verified; CoordsStatus = Verified }
     let deniedStatus = { NumberPlateStatus = Denied; PersonDataStatus = Denied; CoordsStatus = Denied }
     let status = ref waitingStatus
+
+    let gateStatus = ref Closed
 
     let postNumberPlate numberPlate =
         lock status <| fun () ->
@@ -85,14 +90,20 @@ module ApplicationLogic =
             match !status with
             | s when s = verifiedStatus ->
                 status := waitingStatus
-                ///TODO: Write code to open the gate here
-                let openGate = ()
-                openGate
+                lock gateStatus <| fun () -> gateStatus := Open
                 Success { status = "verified" }
             | s when s = deniedStatus ->
                 status := deniedStatus
                 Success { status = "denied" }
             | _ -> Success { status = "waiting" }
+
+    let getQueryStatus = 
+        lock gateStatus <| fun () ->
+            match !gateStatus with
+            | Open -> 
+                gateStatus := Closed
+                "open"
+            | Closed -> "closed"
 
 type WebApi() = 
     interface IWebsite<Action> with
@@ -107,6 +118,9 @@ type WebApi() =
                 | GPSData( {x = x; y = y} ) ->
                     Content.JsonContent <| fun _ ->
                         ApplicationLogic.postGPSData(x, y)
+                | CheckOpen -> 
+                    Content.JsonContent <| fun _ ->
+                        ApplicationLogic.getQueryStatus
                 | Default -> Content.PageContent <| fun _ -> Page.Default
         member this.Actions = []
 
